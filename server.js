@@ -3,10 +3,18 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { createGame, tickGame } = require('./game');
 const { createBot } = require('./bot');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
+
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
 
 let waitingPlayer = null;
 let games = new Map();
@@ -71,6 +79,7 @@ function startGame(players, bot = null) {
   }, 1000 / 60);
 }
 
-server.listen(3000, () => {
-  console.log('Game server running on http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Game server running on port ${PORT}`);
 });
